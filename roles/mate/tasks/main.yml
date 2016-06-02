@@ -1,0 +1,30 @@
+- name: Install MATE group of packages on Fedora
+  shell: yum groupinstall -y "MATE Desktop" --exclude fedora-release\* && yum -y install NetworkManager-config-server
+  when: xo_model == "none" and not {{ use_cache }} and not {{ no_network }} and ansible_distribution_version >= "21"
+  tags:
+    - download
+
+- name: Install X Windows on CentOS
+  shell: yum groupinstall -y "X Window System"  && yum -y install NetworkManager-config-server
+  when: not {{ use_cache }} and not {{ no_network }} and ansible_distribution == "CentOS"
+  tags:
+    - download
+
+- name: Install MATE Desktop on CentOS
+  shell: yum groupinstall -y "MATE Desktop" 
+  when: not {{ use_cache }} and not {{ no_network }} and ansible_distribution == "CentOS"
+  tags:
+    - download
+
+- name: Install Addtional Applications if enabled
+  shell: yum groupinstall -y "Educational Software"
+  when: not {{ use_cache }} 
+        and not {{ no_network }} 
+        and ( ansible_distribution == "CentOS" or ansible_distribution_version >= "21")
+        and mate_install_applications
+  tags:
+    - download
+
+- name: Boot to the GUI desktop by default
+  shell: systemctl set-default graphical.target
+  when: ansible_distribution == "CentOS" or ansible_distribution_version >= "21"

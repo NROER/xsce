@@ -1,5 +1,5 @@
 - name: Install MATE group of packages on Fedora
-  shell: yum groupinstall -y "MATE Desktop" --exclude fedora-release\* && yum -y install NetworkManager-config-server
+  shell: yum groupinstall -y "MATE Desktop" && yum -y install NetworkManager-config-server
   when: xo_model == "none" and not {{ use_cache }} and not {{ no_network }} and ansible_distribution_version >= "21"
   tags:
     - download
